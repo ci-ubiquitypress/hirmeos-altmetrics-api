@@ -1,80 +1,141 @@
 FORMAT: 1A
-HOST: https://polls.apiblueprint.org/
+HOST: https://altmetrics.apiblueprint.org/
 
 # HIRMEOS Altmetrics
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+The HIRMEOS Altmetrics service collects metrics for books that it has URIs for.
+Specifically, a single DOI, and one or more URLs. The Altmetrics API primarily
+provides a means to register URIs for one or more books on the Altmetrics service.
 
-## Questions Collection [/questions]
 
-### List All Questions [GET]
+## Token Endpoint [/api/get_token]
+
+### Fetch a Token [GET]
+
+Interacting with the Altmetrics service requires a token for authorisation.
+
+This endpoint uses BasicAuth (username/password) to authenticate you as a 
+user, and issues a token that can be used for posting URIs to the Altmetrics
+service, as well as events to the Metics API. 
+
++ Request
+    + Headers
+
+            Authorization: Basic email:password
+
++ Response 200 (text/html)
+
+        Wl2IEbI029Uj969wAIsUJdEZWI2nuiNeIGOGjmJyihsIIZiiiMW0sJdjxjQIGi3ihj17.mIGNiI7ISQIlNViCsGss0wh9JtUgiNhZsiIJuy1YNFQCkv24yuG2GIsIIFdY27iAWetSiG2diICI2lIir1kFcSvQJzIdNlIhIjblJ_o7e2Yis9RVCNs0rXsbWJ10tlNnEYFJs7IFL1yedL36PslJrAAISuv
+        
+ 
+### Fetch a Token [POST]
+
+A POST endpoint was added as this is how other HIRMEOS services have requested
+the fetch-token endpoint to work. 
+
+The response format is also JSON, instead of text, and contains far more 
+detailed token information.
+
+
++ Request
+    + Headers
+
+            Authorization: Basic email:password
 
 + Response 200 (application/json)
 
-        [
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
-            }
-        ]
-
-### Create a New Question [POST]
-
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
-
-+ Request (application/json)
-
         {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
+          "status": "ok",
+          "count": 1,
+          "code": 200,
+          "data": [
+            {
+              "surname": "rahtrehleigr",
+              "name": "houan",
+              "authority": "pleb",
+              "token": "Wl2IEbI029Uj969wAIsUJdEZWI2nuiNeIGOGjmJyihsIIZiiiMW0sJdjxjQIGi3ihj17.mIGNiI7ISQIlNViCsGss0wh9JtUgiNhZsiIJuy1YNFQCkv24yuG2GIsIIFdY27iAWetSiG2diICI2lIir1kFcSvQJzIdNlIhIjblJ_o7e2Yis9RVCNs0rXsbWJ10tlNnEYFJs7IFL1yedL36PslJrAAISuv",
+              "email": "h.rahtrehleigr@agreemail.com"
+            }
+          ]
         }
 
-+ Response 201 (application/json)
 
+## URIs Endpoint [/api/uriset]
+
+### Fetch URIs [GET]
+
+Get all URIs associated with the your user account, authenticated with a token
+using the Bearer schema.
+
++ Request
     + Headers
 
-            Location: /questions/2
+            Authorization: Bearer Wl2IEbI029Uj969wAIsUJdEZWI2nuiNeIGOGjmJyihsIIZiiiMW0sJdjxjQIGi3ihj17.mIGNiI7ISQIlNViCsGss0wh9JtUgiNhZsiIJuy1YNFQCkv24yuG2GIsIIFdY27iAWetSiG2diICI2lIir1kFcSvQJzIdNlIhIjblJ_o7e2Yis9RVCNs0rXsbWJ10tlNnEYFJs7IFL1yedL36PslJrAAISuv
+
++ Response 200 (application/json)
+
+        {
+          "data": [
+            {
+              "urls": [
+                "https://www.ancient-asia-journal.com/articles/10.5334/aa.06102",
+                "https://www.ancient-asia-journal.com/articles/10.5334/aa.06102/galley/4/download",
+                "https://www.ancient-asia-journal.com/articles/10.5334/aa.06102/galley/3/download"
+              ],
+              "last_checked": null,
+              "raw": "10.5334/aa.06102"
+            },
+            {
+              "urls": [
+                "https://www.ubiquitypress.com/site/books/10.5334/baj",
+                "https://www.ubiquitypress.com/site/books/10.5334/baj/read",
+                "https://www.ubiquitypress.com/site/books/10.5334/baj/download/1346",
+                "https://www.ubiquitypress.com/site/books/10.5334/baj/download/1016",
+                "https://www.ubiquitypress.com/site/books/10.5334/baj/download/1015"
+              ],
+              "last_checked": "2020-05-13T13:52:14.034245+00:00",
+              "raw": "10.5334/baj"
+            },
+            {
+                "... etc": "... etc"
+            }
+          ]
+        }
+        
+### Register URIs [POST]
+
+Register new URIs associated, authenticated with a token using the Bearer schema.
+
++ Request (application/json)
+    + Headers
+
+            Authorization: Bearer Wl2IEbI029Uj969wAIsUJdEZWI2nuiNeIGOGjmJyihsIIZiiiMW0sJdjxjQIGi3ihj17.mIGNiI7ISQIlNViCsGss0wh9JtUgiNhZsiIJuy1YNFQCkv24yuG2GIsIIFdY27iAWetSiG2diICI2lIir1kFcSvQJzIdNlIhIjblJ_o7e2Yis9RVCNs0rXsbWJ10tlNnEYFJs7IFL1yedL36PslJrAAISuv
 
     + Body
-
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
-                    }
+    
+            [   
+              {
+                "doi": "10.5334/bam",
+                "url": [
+                  "https://www.ubiquitypress.com/site/books/10.5334/bam",
+                  "https://www.ubiquitypress.com/site/books/10.5334/bam/read",
+                  "https://www.ubiquitypress.com/site/books/10.5334/bam/download/1610",
+                  "https://www.ubiquitypress.com/site/books/10.5334/bam/download/1611",
+                  "https://www.ubiquitypress.com/site/books/10.5334/bam/download/1613"
                 ]
-            }
+              },
+              {
+                "doi": "10.5334/bay",
+                "url": [
+                  "https://www.ubiquitypress.com/site/books/10.5334/bay",
+                  "https://www.ubiquitypress.com/site/books/10.5334/bay/read",
+                  "https://www.ubiquitypress.com/site/books/10.5334/bay/download/1888",
+                  "https://www.ubiquitypress.com/site/books/10.5334/bay/download/1889",
+                  "https://www.ubiquitypress.com/site/books/10.5334/bay/download/1891"
+                ]
+              }
+            ]
+
++ Response 200 (application/json)
+
+        '200'
